@@ -21,14 +21,14 @@
 import logging
 from typing import Callable, Dict
 
-import WDL.runtime.task_container
+import WDL.runtime.backend.singularity
 from WDL.runtime import config
 
 
-class DockerRun(WDL.runtime.task_container.TaskContainer):
+class SlurmSingularityRun(WDL.runtime.backend.singularity.SingularityContainer):
     @classmethod
     def global_init(cls, cfg: config.Loader, logger: logging.Logger) -> None:
-        pass
+        super().global_init(cfg, logger)
 
     @classmethod
     def detect_resource_limits(cls, cfg: config.Loader,

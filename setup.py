@@ -33,10 +33,11 @@ setup(
     author_email="sasc <at> lumc.nl",
     python_requires=">=3.7",
     packages=find_packages('src'),
+    package_dir={'': 'src'},
     install_requires=["miniwdl>=1.6.0"],
     entry_points={
         "miniwdl.plugin.container_backend": [
-            "example_docker_run = miniwdl_slurm.docker_run:DockerRun"
+            "slurm_singularity=miniwdl_slurm.slurm_singularity:SlurmSingularityRun"
         ],
     },
 )
