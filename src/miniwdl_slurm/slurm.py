@@ -18,23 +18,31 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import logging
-from typing import Callable, Dict
-
-import WDL.runtime.task_container
-from WDL.runtime import config
+import subprocess
+from typing import Dict, Optional
 
 
-class DockerRun(WDL.runtime.task_container.TaskContainer):
-    @classmethod
-    def global_init(cls, cfg: config.Loader, logger: logging.Logger) -> None:
-        pass
+def run_command(*args) -> str:
+    """Runs a command, returns the stdout of the command."""
+    result = subprocess.run(
+        args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        check=True,
+        encoding="UTF-8",  # Enforces text output
+    )
+    return result.stdout
 
-    @classmethod
-    def detect_resource_limits(cls, cfg: config.Loader,
-                               logger: logging.Logger) -> Dict[str, int]:
-        return {}
 
-    def _run(self, logger: logging.Logger, terminating: Callable[[], bool],
-             command: str) -> int:
-        pass
+def slurm_get_default_partition() -> str:
+    output = run_command("sinfo", "--format=%P")
+    partitions = output.split('\n')[1:]
+    for partition in partitions:
+        if partition.endswith('*'):
+            return partition.strip('*')
+    raise RuntimeError("Could not determine default SLURM partition")
+
+
+def slurm_get_resource_limits(partition: str) -> Dict[str, int]:
+    args = ["sinfo", "--format"]
+    return {}
