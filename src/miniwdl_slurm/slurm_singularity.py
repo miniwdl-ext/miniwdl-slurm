@@ -19,10 +19,12 @@
 # SOFTWARE.
 
 import logging
+import sys
 from typing import Callable, Dict
 
 import WDL.runtime.backend.singularity
 from WDL.runtime import config
+from WDL.runtime.backend.cli_subprocess import _SubprocessScheduler
 
 
 class SlurmSingularityRun(WDL.runtime.backend.singularity.SingularityContainer):
@@ -30,11 +32,17 @@ class SlurmSingularityRun(WDL.runtime.backend.singularity.SingularityContainer):
     def global_init(cls, cfg: config.Loader, logger: logging.Logger) -> None:
         super().global_init(cfg, logger)
 
+        # TODO: Query from cluster. This requires parsing sinfo output and
+        # determining which partition etc. etc.
+        cls._resource_limits = {
+            "cpu": sys.maxsize,
+            "mem_bytes": sys.maxsize,
+            "time": sys.maxsize,
+        }
+        _SubprocessScheduler.global_init(cls._resource_limits)
+
     @classmethod
     def detect_resource_limits(cls, cfg: config.Loader,
                                logger: logging.Logger) -> Dict[str, int]:
-        return {}
+        return super().detect_resource_limits(cfg, logger)
 
-    def _run(self, logger: logging.Logger, terminating: Callable[[], bool],
-             command: str) -> int:
-        pass
