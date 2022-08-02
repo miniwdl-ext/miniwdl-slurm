@@ -19,13 +19,15 @@
 # SOFTWARE.
 
 import logging
-import os.path
+import shlex
 import sys
-from typing import Callable, Dict
+from contextlib import ExitStack
+from typing import Callable, Dict, List
 
 from WDL.runtime.backend.singularity import SingularityContainer
 from WDL.runtime import config
 from WDL.runtime.backend.cli_subprocess import _SubprocessScheduler
+from WDL._util import StructuredLogMessage
 
 
 class SlurmSingularityRun(SingularityContainer):
@@ -55,4 +57,40 @@ class SlurmSingularityRun(SingularityContainer):
     def detect_resource_limits(cls, cfg: config.Loader,
                                logger: logging.Logger) -> Dict[str, int]:
         return cls._resource_limits
+
+    def _slurm_invocation(self):
+        # We use srun as this makes the submitted job behave like a local job.
+        # This also gives informative exit codes back, including 253 for out
+        # of memory.
+        srun_args = ["srun"]
+
+        cpu = self.runtime_values.get("cpu", None)
+        if cpu is not None:
+            srun_args.extend(["--cpus-per-task", str(cpu)])
+
+        memory = self.runtime_values.get("memory_limit", None)
+        if memory is not None:
+            srun_args.extend(["--mem", f"{memory / (1024 ^ 2)}M"])
+
+        time_minutes = self.runtime_values.get("time_minutes", None)
+        if time_minutes is not None:
+            srun_args.extend(["--time", str(time_minutes)])
+
+        if self.cfg.has_section("slurm"):
+            partition = self.cfg.get("slurm", "partition")
+            if partition is not None:
+                srun_args.extend(["--partition", partition])
+
+        return srun_args
+
+    def _run_invocation(self, logger: logging.Logger, cleanup: ExitStack,
+                        image: str) -> List[str]:
+        singularity_command = super()._run_invocation(logger, cleanup, image)
+
+        slurm_invocation = self._slurm_invocation()
+        slurm_invocation.extend(["--wrap", " ".join(singularity_command)])
+        slurm_invocation_string = ' '.join(shlex.quote(part)
+                                           for part in slurm_invocation)
+        logger.info(f"Slurm invocation: " + slurm_invocation_string)
+        return slurm_invocation
 
