@@ -31,7 +31,7 @@ setup(
     long_description_content_type="text/markdown",
     author="Leiden University Medical Center",
     author_email="sasc <at> lumc.nl",
-    python_requires=">=3.7",
+    python_requires=">=3.6",
     packages=find_packages('src'),
     package_dir={'': 'src'},
     install_requires=[
