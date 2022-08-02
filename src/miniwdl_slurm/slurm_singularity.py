@@ -88,7 +88,7 @@ class SlurmSingularityRun(SingularityContainer):
         singularity_command = super()._run_invocation(logger, cleanup, image)
 
         slurm_invocation = self._slurm_invocation()
-        slurm_invocation.extend(["--wrap", " ".join(singularity_command)])
+        slurm_invocation.extend(singularity_command)
         slurm_invocation_string = ' '.join(shlex.quote(part)
                                            for part in slurm_invocation)
         logger.info(f"Slurm invocation: " + slurm_invocation_string)
