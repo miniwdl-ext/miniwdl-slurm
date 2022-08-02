@@ -34,7 +34,8 @@ setup(
     python_requires=">=3.7",
     packages=find_packages('src'),
     package_dir={'': 'src'},
-    install_requires=["miniwdl>=1.6.0"],
+    install_requires=[
+        "miniwdl@git+https://github.com/rhpvorderman/miniwdl@singularity_cache"],
     entry_points={
         "miniwdl.plugin.container_backend": [
             "slurm_singularity=miniwdl_slurm.slurm_singularity:SlurmSingularityRun"
