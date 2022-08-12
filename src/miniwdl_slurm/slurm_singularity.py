@@ -51,9 +51,6 @@ class SlurmSingularityRun(SingularityContainer):
         if cfg.get("singularity", "image_cache") == "":
             cfg.override({"singularity":
                               {"image_cache": "miniwdl_singularity_cache"}})
-        if cfg.get("singularity", "tempdir") == "":
-            cfg.override({"singularity":
-                              {"tempdir": "tmp"}})
         SingularityContainer.global_init(cfg, logger)
 
     @classmethod
