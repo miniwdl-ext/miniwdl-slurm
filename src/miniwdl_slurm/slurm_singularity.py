@@ -52,6 +52,11 @@ class SlurmSingularity(SingularityContainer):
             cfg.override({"singularity": {"image_cache": "miniwdl_singularity_cache"}})
         SingularityContainer.global_init(cfg, logger)
 
+    @classmethod
+    def detect_resource_limits(cls, cfg: config.Loader,
+                               logger: logging.Logger) -> Dict[str, int]:
+        return cls._resource_limits  # type: ignore
+
     def process_runtime(self,
                         logger: logging.Logger,
                         runtime_eval: Dict[str, Value.Base]) -> None:
@@ -60,11 +65,6 @@ class SlurmSingularity(SingularityContainer):
         if "time_minutes" in runtime_eval:
             time_minutes = runtime_eval["time_minutes"].coerce(Type.Int()).value
             self.runtime_values["time_minutes"] = time_minutes
-
-    @classmethod
-    def detect_resource_limits(cls, cfg: config.Loader,
-                               logger: logging.Logger) -> Dict[str, int]:
-        return cls._resource_limits  # type: ignore
 
     def _slurm_invocation(self):
         # We use srun as this makes the submitted job behave like a local job.
