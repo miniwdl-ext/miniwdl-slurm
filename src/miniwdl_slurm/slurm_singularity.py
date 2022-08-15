@@ -22,13 +22,12 @@ import logging
 import shlex
 import sys
 from contextlib import ExitStack
-from typing import Callable, Dict, List
+from typing import Dict, List
 
-from WDL.runtime.backend.singularity import SingularityContainer
+from WDL import Type, Value
 from WDL.runtime import config
 from WDL.runtime.backend.cli_subprocess import _SubprocessScheduler
-from WDL._util import StructuredLogMessage
-from WDL import Type, Value
+from WDL.runtime.backend.singularity import SingularityContainer
 
 
 class SlurmSingularityRun(SingularityContainer):
@@ -50,8 +49,7 @@ class SlurmSingularityRun(SingularityContainer):
         # submit node. If no image_cache is given, simply place a folder in
         # the current working directory.
         if cfg.get("singularity", "image_cache") == "":
-            cfg.override({"singularity":
-                              {"image_cache": "miniwdl_singularity_cache"}})
+            cfg.override({"singularity": {"image_cache": "miniwdl_singularity_cache"}})
         SingularityContainer.global_init(cfg, logger)
 
     def process_runtime(self,
@@ -101,6 +99,5 @@ class SlurmSingularityRun(SingularityContainer):
         slurm_invocation.extend(singularity_command)
         slurm_invocation_string = ' '.join(shlex.quote(part)
                                            for part in slurm_invocation)
-        logger.info(f"Slurm invocation: " + slurm_invocation_string)
+        logger.info("Slurm invocation: " + slurm_invocation_string)
         return slurm_invocation
-
