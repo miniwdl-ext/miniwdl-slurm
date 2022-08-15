@@ -64,7 +64,7 @@ class SlurmSingularityRun(SingularityContainer):
     @classmethod
     def detect_resource_limits(cls, cfg: config.Loader,
                                logger: logging.Logger) -> Dict[str, int]:
-        return cls._resource_limits
+        return cls._resource_limits  # type: ignore
 
     def _slurm_invocation(self):
         # We use srun as this makes the submitted job behave like a local job.
