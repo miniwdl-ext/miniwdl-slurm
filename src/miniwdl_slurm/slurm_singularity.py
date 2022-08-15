@@ -97,7 +97,6 @@ class SlurmSingularity(SingularityContainer):
 
         slurm_invocation = self._slurm_invocation()
         slurm_invocation.extend(singularity_command)
-        slurm_invocation_string = ' '.join(shlex.quote(part)
-                                           for part in slurm_invocation)
-        logger.info("Slurm invocation: " + slurm_invocation_string)
+        logger.info("Slurm invocation: " + ' '.join(
+            shlex.quote(part) for part in slurm_invocation))
         return slurm_invocation
