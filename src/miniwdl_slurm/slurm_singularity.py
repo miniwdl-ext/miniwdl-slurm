@@ -78,7 +78,8 @@ class SlurmSingularity(SingularityContainer):
 
         memory = self.runtime_values.get("memory_limit", None)
         if memory is not None:
-            srun_args.extend(["--mem", f"{memory / (1024 ^ 2)}M"])
+            # Round to the nearest megabyte.
+            srun_args.extend(["--mem", f"{round(memory / (1024 ^ 2))}M"])
 
         time_minutes = self.runtime_values.get("time_minutes", None)
         if time_minutes is not None:
