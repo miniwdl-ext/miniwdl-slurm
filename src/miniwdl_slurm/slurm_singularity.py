@@ -34,9 +34,9 @@ from WDL import Type, Value
 class SlurmSingularityRun(SingularityContainer):
     @classmethod
     def global_init(cls, cfg: config.Loader, logger: logging.Logger) -> None:
-
-        # TODO: Query from cluster. This requires parsing sinfo output and
-        # determining which partition etc. etc.
+        # Set resources to maxsize. The base class (_SubProcessScheduler)
+        # looks at the resources of the current host, but since we are
+        # dealing with a cluster these limits do not apply.
         cls._resource_limits = {
             "cpu": sys.maxsize,
             "mem_bytes": sys.maxsize,
