@@ -30,7 +30,7 @@ from WDL.runtime.backend.cli_subprocess import _SubprocessScheduler
 from WDL.runtime.backend.singularity import SingularityContainer
 
 
-class SlurmSingularityRun(SingularityContainer):
+class SlurmSingularity(SingularityContainer):
     @classmethod
     def global_init(cls, cfg: config.Loader, logger: logging.Logger) -> None:
         # Set resources to maxsize. The base class (_SubProcessScheduler)

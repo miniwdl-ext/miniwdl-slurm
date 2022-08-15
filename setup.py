@@ -37,7 +37,7 @@ setup(
     install_requires=["miniwdl>=1.6.0"],
     entry_points={
         "miniwdl.plugin.container_backend": [
-            "slurm_singularity=miniwdl_slurm.slurm_singularity:SlurmSingularityRun"
+            "slurm_singularity=miniwdl_slurm.slurm_singularity:SlurmSingularity"
         ],
     },
 )
