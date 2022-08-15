@@ -28,6 +28,7 @@ from WDL.runtime.backend.singularity import SingularityContainer
 from WDL.runtime import config
 from WDL.runtime.backend.cli_subprocess import _SubprocessScheduler
 from WDL._util import StructuredLogMessage
+from WDL import Type, Value
 
 
 class SlurmSingularityRun(SingularityContainer):
@@ -52,6 +53,15 @@ class SlurmSingularityRun(SingularityContainer):
             cfg.override({"singularity":
                               {"image_cache": "miniwdl_singularity_cache"}})
         SingularityContainer.global_init(cfg, logger)
+
+    def process_runtime(self,
+                        logger: logging.Logger,
+                        runtime_eval: Dict[str, Value.Base]) -> None:
+        """Any non-default runtime variables can be parsed here"""
+        super().process_runtime(logger, runtime_eval)
+        if "time_minutes" in runtime_eval:
+            time_minutes = runtime_eval["time_minutes"].coerce(Type.Int()).value
+            self.runtime_values["time_minutes"] = time_minutes
 
     @classmethod
     def detect_resource_limits(cls, cfg: config.Loader,
