@@ -57,6 +57,9 @@ class SlurmSingularity(SingularityContainer):
                                logger: logging.Logger) -> Dict[str, int]:
         return cls._resource_limits  # type: ignore
 
+    def cli_name(self) -> str:
+        return "slurm_singularity"
+
     def process_runtime(self,
                         logger: logging.Logger,
                         runtime_eval: Dict[str, Value.Base]) -> None:
