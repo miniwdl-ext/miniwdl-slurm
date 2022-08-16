@@ -19,6 +19,7 @@
 # SOFTWARE.
 
 import logging
+import os
 import shlex
 import sys
 from contextlib import ExitStack
@@ -49,7 +50,12 @@ class SlurmSingularity(SingularityContainer):
         # submit node. If no image_cache is given, simply place a folder in
         # the current working directory.
         if cfg.get("singularity", "image_cache") == "":
-            cfg.override({"singularity": {"image_cache": "miniwdl_singularity_cache"}})
+            cfg.override(
+                {"singularity": {
+                    "image_cache": os.path.join(os.getcwd(),
+                                                "miniwdl_singularity_cache")
+                }}
+            )
         SingularityContainer.global_init(cfg, logger)
 
     @classmethod
