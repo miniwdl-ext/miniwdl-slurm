@@ -41,10 +41,11 @@ The following information should be set in the `miniwdl configuration
             "--containall"
         ]
 
-    # If image_cache is not set, the miniwdl-slurm plugin will make sure it
-    # is set to a directory inside $PWD to ensure availability on the cluster.
+    # Location of the singularity images (optional). The miniwdl-slurm plugin
+    # will set it to a directory inside $PWD. This location must be reachable
+    # for the submit nodes.
     image_cache = "$PWD/miniwdl_singularity_cache"
 
     [slurm]
-    # extra arguments passed to the srun command
-    #extra_args="--partition heavy_users,gpu --comment 'run with miniwdl'"
+    # extra arguments passed to the srun command (optional).
+    extra_args="--partition heavy_users,gpu --comment 'run with miniwdl'"
