@@ -20,7 +20,7 @@
 
 from setuptools import find_packages, setup
 
-with open("README.md") as fp:
+with open("README.rst") as fp:
     long_description = fp.read()
 
 setup(
@@ -37,7 +37,7 @@ setup(
     install_requires=["miniwdl>=1.6.0"],
     entry_points={
         "miniwdl.plugin.container_backend": [
-            "slurm_singularity=miniwdl_slurm.slurm_singularity:SlurmSingularity"
+            "slurm_singularity=miniwdl_slurm:SlurmSingularity"
         ],
     },
 )
