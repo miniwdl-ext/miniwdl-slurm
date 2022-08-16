@@ -46,6 +46,5 @@ The following information should be set in the `miniwdl configuration
     image_cache = "$PWD/miniwdl_singularity_cache"
 
     [slurm]
-    # Which partition to submit to. If omitted the "--partition" flag will
-    # be omitted in the srun command, and the SLURM default will be used.
-    #partition="heavy_users,gpu"
+    # extra arguments passed to the srun command
+    #extra_args="--partition heavy_users,gpu --comment 'run with miniwdl'"

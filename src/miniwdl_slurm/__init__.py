@@ -99,10 +99,9 @@ class SlurmSingularity(SingularityContainer):
             srun_args.extend(["--time", str(time_minutes)])
 
         if self.cfg.has_section("slurm"):
-            partition = self.cfg.get("slurm", "partition")
-            if partition is not None:
-                srun_args.extend(["--partition", partition])
-
+            extra_args = self.cfg.get("slurm", "extra_args")
+            if extra_args is not None:
+                srun_args.extend(shlex.split(extra_args))
         return srun_args
 
     def _run_invocation(self, logger: logging.Logger, cleanup: ExitStack,
