@@ -70,7 +70,10 @@ class SlurmSingularity(SingularityContainer):
         # We use srun as this makes the submitted job behave like a local job.
         # This also gives informative exit codes back, including 253 for out
         # of memory.
-        srun_args = ["srun"]
+        srun_args = [
+            "srun",
+            "--epilog", "echo $SLURM_JOBID > job_id.txt"
+        ]
 
         cpu = self.runtime_values.get("cpu", None)
         if cpu is not None:
