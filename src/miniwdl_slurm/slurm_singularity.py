@@ -79,7 +79,7 @@ class SlurmSingularity(SingularityContainer):
         if cpu is not None:
             srun_args.extend(["--cpus-per-task", str(cpu)])
 
-        memory = self.runtime_values.get("memory_limit", None)
+        memory = self.runtime_values.get("memory_reservation", None)
         if memory is not None:
             # Round to the nearest megabyte.
             srun_args.extend(["--mem", f"{round(memory / (1024 ^ 2))}M"])
