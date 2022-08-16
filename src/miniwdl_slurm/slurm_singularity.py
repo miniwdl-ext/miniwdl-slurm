@@ -72,7 +72,7 @@ class SlurmSingularity(SingularityContainer):
         # of memory.
         srun_args = [
             "srun",
-            "--epilog", "echo $SLURM_JOBID > job_id.txt"
+            "--job-name", self.run_id,
         ]
 
         cpu = self.runtime_values.get("cpu", None)
