@@ -63,6 +63,7 @@ class SlurmSingularity(SingularityContainer):
                                logger: logging.Logger) -> Dict[str, int]:
         return cls._resource_limits  # type: ignore
 
+    @property
     def cli_name(self) -> str:
         return "slurm_singularity"
 
