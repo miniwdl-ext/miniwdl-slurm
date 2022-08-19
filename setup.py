@@ -28,7 +28,7 @@ setup(
     version="v0.1.0-dev",
     description="miniwdl slurm singularity backend",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/x-rst",
     author="Leiden University Medical Center",
     author_email="sasc <at> lumc.nl",
     python_requires=">=3.6",
