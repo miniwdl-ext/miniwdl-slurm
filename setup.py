@@ -26,8 +26,12 @@ with open("README.rst") as fp:
 setup(
     name="miniwdl-slurm",
     version="v0.1.0-dev",
-    description="miniwdl slurm singularity backend",
+    license="MIT",
+    url="https://github.com/lumc/miniwdl-slurm",
+    description="miniwdl slurm backend using singularity",
+    keywords="WDL miniwdl slurm backend singularity",
     long_description=long_description,
+    zip_safe=False,
     long_description_content_type="text/x-rst",
     author="Leiden University Medical Center",
     author_email="sasc <at> lumc.nl",
@@ -40,4 +44,10 @@ setup(
             "slurm_singularity=miniwdl_slurm:SlurmSingularity"
         ],
     },
+    classifiers= [
+        "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3 :: Only",
+        "Topic :: System :: Distributed Computing",
+    ]
 )
