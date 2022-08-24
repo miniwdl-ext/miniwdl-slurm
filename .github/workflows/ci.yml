@@ -42,15 +42,10 @@ jobs:
       - name: download slurm role
         run: sudo ansible-galaxy install galaxyproject.slurm,1.0.1
       - name: install slurm and singularity on this node
-        run: sudo ansible-playbook tests/slurm_playbook.yml -vv
-      - name: Check slurm logs
-        run: "sudo bash -c 'cat /var/log/slurm/* || true'"
+        run: sudo ansible-playbook tests/slurm_playbook.yml
       - name: run miniwdl self test
         run: miniwdl run-self-test --cfg tests/miniwdl.cfg
         timeout-minutes: 3
-      - name: Check slurm logs
-        run: "sudo bash -c 'cat /var/log/slurm/* || true'"
-        if: ${{ failure() }}
       - name: Run QC workflow
         run: >- 
           coverage run --source=miniwdl_slurm -m WDL run 
@@ -58,4 +53,9 @@ jobs:
           --cfg ../miniwdl.cfg 
           QC.wdl Cutadapt.cores=1 Cutadapt.timeMinutes=10
         working-directory: "tests/QC"
+      - name: Create xml report
+        run: coverage xml
       - uses: codecov/codecov-action@v3
+      - name: Check slurm logs
+        run: "sudo bash -c 'cat /var/log/slurm/* || true'"
+        if: ${{ failure() }}
