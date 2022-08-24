@@ -24,3 +24,38 @@ jobs:
         run: pip install tox
       - name: Lint
         run: tox -e lint
+
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2.3.4
+        with:
+          submodules: recursive
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install miniwdl-slurm
+        run: pip install . coverage
+      - name: install ansible
+        run: sudo apt-get install ansible
+      - name: download slurm role
+        run: sudo ansible-galaxy install galaxyproject.slurm,1.0.1
+      - name: install slurm and singularity on this node
+        run: sudo ansible-playbook tests/slurm_playbook.yml -vv
+      - name: Check slurm logs
+        run: "sudo bash -c 'cat /var/log/slurm/* || true'"
+      - name: run miniwdl self test
+        run: miniwdl run-self-test --cfg tests/miniwdl.cfg
+        timeout-minutes: 3
+      - name: Check slurm logs
+        run: "sudo bash -c 'cat /var/log/slurm/* || true'"
+        if: ${{ failure() }}
+      - name: Run QC workflow
+        run: >- 
+          coverage run --source=miniwdl_slurm -m WDL run 
+          -i tests/integration/single_end.json 
+          --cfg ../miniwdl.cfg 
+          QC.wdl Cutadapt.cores=1 Cutadapt.timeMinutes=10
+        working-directory: "tests/QC"
+      - uses: codecov/codecov-action@v3

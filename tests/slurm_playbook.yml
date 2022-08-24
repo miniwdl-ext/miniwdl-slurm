@@ -1,0 +1,40 @@
+- name: Slurm all in One
+  hosts: localhost
+  become: true
+  vars:
+    slurm_config_dir: "/etc/slurm"
+    slurm_roles: ['controller', 'exec', 'dbd']
+    slurmdbd_config:
+      StorageType: "accounting_storage/none"
+      DbdHost: "localhost"
+      PidFile: "run/slurmdbd.pid"
+    slurm_config:
+      AccountingStorageType: "accounting_storage/none"
+      SlurmctldLogFile: "/var/log/slurm/slurmctld.log"
+      SlurmdLogFile: "/var/log/slurm/slurmd.log"
+      SlurmctldPidFile: "/run/slurmctld.pid"
+      SlurmdPidFile: "/run/slurmd.pid"
+      StateSaveLocation: "/var/lib/slurm/slurmctld"
+      SlurmdSpoolDir: "/var/spool/slurm/slurmd"
+    slurm_nodes:
+      - name: "localhost"
+        CPUs: 1
+        RealMemory: 6144  # in MB. CI nodes have about 7 GB on Github CI.
+    slurm_partitions:
+      - name: local
+        Default: YES
+        MaxTime: UNLIMITED
+        Nodes: "localhost"
+  pre_tasks:
+    - name: Install apptainer
+      apt:
+        update_cache: true
+        cache_valid_time: 36000
+        install_recommends: false
+        deb: https://github.com/apptainer/apptainer/releases/download/v1.0.3/apptainer_1.0.3_amd64.deb
+    - name: create spool directory
+      file:
+        state: directory
+        path: "/var/spool/slurm/slurmd"
+  roles:
+    - role: galaxyproject.slurm

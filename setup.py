@@ -44,7 +44,7 @@ setup(
             "slurm_singularity=miniwdl_slurm:SlurmSingularity"
         ],
     },
-    classifiers= [
+    classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3 :: Only",
