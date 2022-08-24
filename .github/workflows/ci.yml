@@ -24,6 +24,8 @@ jobs:
         run: pip install tox
       - name: Lint
         run: tox -e lint
+      - name: Check packaging
+        run: tox -e twine_check
 
   test:
     runs-on: ubuntu-22.04
