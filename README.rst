@@ -1,3 +1,6 @@
+.. image:: https://codecov.io/gh/LUMC/miniwdl-slurm/branch/main/graph/badge.svg?token=Z7FXMDJMN9
+ :target: https://codecov.io/gh/LUMC/miniwdl-slurm
+
 miniwdl-slurm
 =============
 Extends miniwdl to run workflows on SLURM clusters in singularity containers.
