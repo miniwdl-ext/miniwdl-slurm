@@ -20,8 +20,9 @@ Installation
 
 Configuration
 --------------
-The following information should be set in the `miniwdl configuration
-<https://miniwdl.readthedocs.io/en/latest/runner_reference.html#configuration>`_:
+The following `miniwdl configuration
+<https://miniwdl.readthedocs.io/en/latest/runner_reference.html#configuration>`_
+example can be used to use miniwdl on a SLURM cluster:
 
 .. code-block:: ini
 
