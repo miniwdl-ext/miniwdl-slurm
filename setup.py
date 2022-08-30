@@ -27,7 +27,7 @@ setup(
     name="miniwdl-slurm",
     version="v0.1.0-dev",
     license="MIT",
-    url="https://github.com/lumc/miniwdl-slurm",
+    url="https://github.com/miniwdl-ext/miniwdl-slurm",
     description="miniwdl slurm backend using singularity",
     keywords="WDL miniwdl slurm backend singularity",
     long_description=long_description,

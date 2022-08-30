@@ -1,5 +1,6 @@
-.. image:: https://codecov.io/gh/LUMC/miniwdl-slurm/branch/main/graph/badge.svg?token=Z7FXMDJMN9
- :target: https://codecov.io/gh/LUMC/miniwdl-slurm
+.. image:: https://codecov.io/gh/miniwdl-ext/miniwdl-slurm/branch/main/graph/badge.svg?token=Z7FXMDJMN9
+  :target: https://codecov.io/gh/miniwdl-ext/miniwdl-slurm
+  :alt:
 
 miniwdl-slurm
 =============
@@ -13,10 +14,13 @@ description has a container, singularity will be used as container runtime.
 
 Installation
 ------------
+For the latest stable version::
 
-.. code-block::
+    pip install miniwdl-slurm
 
-    pip install git+https://github.com/LUMC/miniwdl-slurm.git
+For the development version::
+
+    pip install git+https://github.com/miniwdl-ext/miniwdl-slurm.git
 
 Configuration
 --------------
