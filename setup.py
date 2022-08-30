@@ -34,7 +34,7 @@ setup(
     zip_safe=False,
     long_description_content_type="text/x-rst",
     author="Leiden University Medical Center",
-    author_email="sasc <at> lumc.nl",
+    author_email="sasc@lumc.nl",
     python_requires=">=3.6",
     packages=find_packages('src'),
     package_dir={'': 'src'},
