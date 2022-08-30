@@ -32,7 +32,27 @@ The following information should be set in the `miniwdl configuration
     # higher numbers means miniwdl has to monitor more processes simultaneously
     # which might impact performance.
     task_concurrency=200
+    
+    # This setting allows running tasks to continue, even if one other tasks fails. 
+    # Useful in combination with call caching.
+    fail_fast = false
 
+    [call_cache]
+    # The following settings create a call cache under the current directory.
+    # This is not a miniwdl-slurm specific setting, but very useful in typical 
+    # HPC use.
+    put = true 
+    get = true 
+    dir = "$PWD/miniwdl_call_cache"
+
+    [task_runtime]
+    # Setting a 'maxRetries' default allows jobs that fail due to intermittent
+    # errors on the cluster to be retried.
+    defaults = {
+            "maxRetries": 2,
+            "docker": "ubuntu:20.04"
+        }
+ 
     [singularity]
     # This plugin wraps the singularity backend. Make sure the settings are
     # appropriate for your cluster.
