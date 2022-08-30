@@ -35,13 +35,14 @@ example can be used to use miniwdl on a SLURM cluster:
     task_concurrency=200
     
     # This setting allows running tasks to continue, even if one other tasks fails. 
-    # Useful in combination with call caching.
+    # Useful in combination with call caching. Prevents wasting resources by
+    # cancelling jobs half-way that would probably succeed.
     fail_fast = false
 
     [call_cache]
     # The following settings create a call cache under the current directory.
-    # This is not a miniwdl-slurm specific setting, but very useful in typical 
-    # HPC use.
+    # This prevents wasting unnecessary resources on the cluster by rerunning 
+    # jobs that have already succeeded.
     put = true 
     get = true 
     dir = "$PWD/miniwdl_call_cache"
