@@ -25,7 +25,7 @@ with open("README.rst") as fp:
 
 setup(
     name="miniwdl-slurm",
-    version="0.1.0",
+    version="0.2.0-dev",
     license="MIT",
     url="https://github.com/miniwdl-ext/miniwdl-slurm",
     description="miniwdl slurm backend using singularity",
