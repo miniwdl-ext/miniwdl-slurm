@@ -76,6 +76,18 @@ class SlurmSingularity(SingularityContainer):
             time_minutes = runtime_eval["time_minutes"].coerce(Type.Int()).value
             self.runtime_values["time_minutes"] = time_minutes
 
+        if "slurm_partition" in runtime_eval:
+            slurm_partition = runtime_eval["slurm_partition"].coerce(Type.String()).value
+            self.runtime_values["slurm_partition"] = slurm_partition
+
+        if "num_gpu" in runtime_eval:
+            num_gpu = max(1, runtime_eval["num_gpu"].coerce(Type.Int()).value)
+            self.runtime_values["num_gpu"] = num_gpu
+
+        if "slurm_constraint" in runtime_eval:
+            slurm_constraint = runtime_eval["slurm_constraint"].coerce(Type.String()).value
+            self.runtime_values["slurm_constraint"] = slurm_constraint
+
     def _slurm_invocation(self):
         # We use srun as this makes the submitted job behave like a local job.
         # This also gives informative exit codes back, including 253 for out
@@ -84,6 +96,10 @@ class SlurmSingularity(SingularityContainer):
             "srun",
             "--job-name", self.run_id,
         ]
+
+        partition = self.runtime_values.get("slurm_partition", None)
+        if partition is not None:
+            srun_args.extend(["--partition", partition])
 
         cpu = self.runtime_values.get("cpu", None)
         if cpu is not None:
@@ -94,9 +110,18 @@ class SlurmSingularity(SingularityContainer):
             # Round to the nearest megabyte.
             srun_args.extend(["--mem", f"{round(memory / (1024 ** 2))}M"])
 
+        gpu = self.runtime_values.get("gpu", None)
+        if gpu:
+            num_gpu = self.runtime_values.get("num_gpu", 1)
+            srun_args.extend(["--gres", f"gpu:{num_gpu}"])
+
         time_minutes = self.runtime_values.get("time_minutes", None)
         if time_minutes is not None:
             srun_args.extend(["--time", str(time_minutes)])
+
+        slurm_constraint = self.runtime_values.get("slurm_constraint", None)
+        if slurm_constraint is not None:
+            srun_args.extend(["--constraint", slurm_constraint])
 
         if self.cfg.has_section("slurm"):
             extra_args = self.cfg.get("slurm", "extra_args")
