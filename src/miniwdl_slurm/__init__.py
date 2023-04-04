@@ -77,7 +77,8 @@ class SlurmSingularity(SingularityContainer):
             self.runtime_values["time_minutes"] = time_minutes
 
         if "slurm_partition" in runtime_eval:
-            slurm_partition = runtime_eval["slurm_partition"].coerce(Type.String()).value
+            slurm_partition = runtime_eval["slurm_partition"].coerce(
+                Type.String()).value
             self.runtime_values["slurm_partition"] = slurm_partition
 
         if "gpuCount" in runtime_eval:
@@ -85,7 +86,8 @@ class SlurmSingularity(SingularityContainer):
             self.runtime_values["gpuCount"] = gpuCount
 
         if "slurm_constraint" in runtime_eval:
-            slurm_constraint = runtime_eval["slurm_constraint"].coerce(Type.String()).value
+            slurm_constraint = runtime_eval["slurm_constraint"].coerce(
+                Type.String()).value
             self.runtime_values["slurm_constraint"] = slurm_constraint
 
     def _slurm_invocation(self):
