@@ -2,12 +2,14 @@
 Changelog
 ==========
 
-+ Support for ``slurm_partition`` runtime attribute.
-+ Support for ``gpu`` and ``gpuCount`` runtime attributes. The ``gpu`` runtime
+version 0.2.0
+----------------------------
++ Add support for ``slurm_partition`` runtime attribute.
++ Adds support for ``gpu`` and ``gpuCount`` runtime attributes. The ``gpu`` runtime
   attribute is a boolean that indicates whether the task requires a GPU.  The
   ``gpuCount`` runtime attribute is an integer that indicates the number of GPUs
   required by the task.
-+ Support for ``slurm_constraint`` runtime attribute.
++ Add support for ``slurm_constraint`` runtime attribute.
 
 version 0.1.0
 ----------------------------
