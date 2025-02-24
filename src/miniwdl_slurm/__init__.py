@@ -81,6 +81,11 @@ class SlurmSingularity(SingularityContainer):
                 Type.String()).value
             self.runtime_values["slurm_partition"] = slurm_partition
 
+        if "slurm_partition_gpu" in runtime_eval:
+            slurm_partition_gpu = runtime_eval["slurm_partition_gpu"].coerce(
+                Type.String()).value
+            self.runtime_values["slurm_partition_gpu"] = slurm_partition_gpu
+
         if "gpuCount" in runtime_eval:
             gpuCount = max(1, runtime_eval["gpuCount"].coerce(Type.Int()).value)
             self.runtime_values["gpuCount"] = gpuCount
@@ -99,8 +104,16 @@ class SlurmSingularity(SingularityContainer):
             "--job-name", self.run_id,
         ]
 
+        gpu = self.runtime_values.get("gpu", None)
+        if gpu:
+            gpuCount = self.runtime_values.get("gpuCount", 1)
+            srun_args.extend(["--gres", f"gpu:{gpuCount}"])
+
         partition = self.runtime_values.get("slurm_partition", None)
-        if partition is not None:
+        partition_gpu = self.runtime_values.get("slurm_partition_gpu", None)
+        if gpu and partition_gpu is not None:
+            srun_args.extend(["--partition", partition_gpu])
+        elif partition is not None:
             srun_args.extend(["--partition", partition])
 
         cpu = self.runtime_values.get("cpu", None)
@@ -111,11 +124,6 @@ class SlurmSingularity(SingularityContainer):
         if memory is not None:
             # Round to the nearest megabyte.
             srun_args.extend(["--mem", f"{round(memory / (1024 ** 2))}M"])
-
-        gpu = self.runtime_values.get("gpu", None)
-        if gpu:
-            gpuCount = self.runtime_values.get("gpuCount", 1)
-            srun_args.extend(["--gres", f"gpu:{gpuCount}"])
 
         time_minutes = self.runtime_values.get("time_minutes", None)
         if time_minutes is not None:
