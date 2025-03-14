@@ -102,6 +102,9 @@ class SlurmSingularity(SingularityContainer):
         srun_args = [
             "srun",
             "--job-name", self.run_id,
+            # Specifically state that only one task may be spawned.
+            # This prevents issues with the --cpus-per-task flag.
+            "--ntasks", "1",
         ]
 
         gpu = self.runtime_values.get("gpu", None)
@@ -118,7 +121,7 @@ class SlurmSingularity(SingularityContainer):
 
         cpu = self.runtime_values.get("cpu", None)
         if cpu is not None:
-            srun_args.extend(["--cpus-per-task", str(cpu)])
+            srun_args.extend(["--mincpu", str(cpu)])
 
         memory = self.runtime_values.get("memory_reservation", None)
         if memory is not None:

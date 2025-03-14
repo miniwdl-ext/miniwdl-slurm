@@ -2,6 +2,12 @@
 Changelog
 ==========
 
+version 0.3.0-dev
+----------------------------
++ Always set `--ntasks 1`` to prevent multiple tasks being spawned.
++ Add support for a ``slurm_gpu_partition`` runtime attribute.
+
+
 version 0.2.0
 ----------------------------
 + Add support for ``slurm_partition`` runtime attribute.
