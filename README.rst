@@ -72,5 +72,5 @@ example can be used to use miniwdl on a SLURM cluster:
     image_cache = "$PWD/miniwdl_singularity_cache"
 
     [slurm]
-    # extra arguments passed to the srun command (optional).
+    # extra arguments passed to the salloc command (optional).
     extra_args="--partition heavy_users,gpu --comment 'run with miniwdl'"

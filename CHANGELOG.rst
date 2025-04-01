@@ -4,6 +4,8 @@ Changelog
 
 version 0.3.0-dev
 ----------------------------
++ Use ``salloc`` instead of ``srun`` to allow submitting jobs from inside
+  sbatch.
 + Always set `--ntasks 1`` to prevent multiple tasks being spawned.
 + Add support for a ``slurm_gpu_partition`` runtime attribute.
 

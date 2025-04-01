@@ -96,11 +96,12 @@ class SlurmSingularity(SingularityContainer):
             self.runtime_values["slurm_constraint"] = slurm_constraint
 
     def _slurm_invocation(self):
-        # We use srun as this makes the submitted job behave like a local job.
+        # We use salloc as this makes the submitted job behave like a local job.
+        # Salloc also can be used inside of an sbatch job.
         # This also gives informative exit codes back, including 253 for out
         # of memory.
-        srun_args = [
-            "srun",
+        salloc_args = [
+            "salloc",
             "--job-name", self.run_id,
             # Specifically state that only one task may be spawned.
             # This prevents issues with the --cpus-per-task flag.
@@ -110,44 +111,45 @@ class SlurmSingularity(SingularityContainer):
         gpu = self.runtime_values.get("gpu", None)
         if gpu:
             gpuCount = self.runtime_values.get("gpuCount", 1)
-            srun_args.extend(["--gres", f"gpu:{gpuCount}"])
+            salloc_args.extend(["--gres", f"gpu:{gpuCount}"])
 
         partition = self.runtime_values.get("slurm_partition", None)
         partition_gpu = self.runtime_values.get("slurm_partition_gpu", None)
         if gpu and partition_gpu is not None:
-            srun_args.extend(["--partition", partition_gpu])
+            salloc_args.extend(["--partition", partition_gpu])
         elif partition is not None:
-            srun_args.extend(["--partition", partition])
+            salloc_args.extend(["--partition", partition])
 
         cpu = self.runtime_values.get("cpu", None)
         if cpu is not None:
-            srun_args.extend(["--mincpu", str(cpu)])
+            salloc_args.extend(["--mincpu", str(cpu)])
 
         memory = self.runtime_values.get("memory_reservation", None)
         if memory is not None:
             # Round to the nearest megabyte.
-            srun_args.extend(["--mem", f"{round(memory / (1024 ** 2))}M"])
+            salloc_args.extend(["--mem", f"{round(memory / (1024 ** 2))}M"])
 
         time_minutes = self.runtime_values.get("time_minutes", None)
         if time_minutes is not None:
-            srun_args.extend(["--time", str(time_minutes)])
+            salloc_args.extend(["--time", str(time_minutes)])
 
         slurm_constraint = self.runtime_values.get("slurm_constraint", None)
         if slurm_constraint is not None:
-            srun_args.extend(["--constraint", slurm_constraint])
+            salloc_args.extend(["--constraint", slurm_constraint])
 
         if self.cfg.has_section("slurm"):
             extra_args = self.cfg.get("slurm", "extra_args")
             if extra_args is not None:
-                srun_args.extend(shlex.split(extra_args))
-        return srun_args
+                salloc_args.extend(shlex.split(extra_args))
+        return salloc_args
 
     def _run_invocation(self, logger: logging.Logger, cleanup: ExitStack,
                         image: str) -> List[str]:
         singularity_command = super()._run_invocation(logger, cleanup, image)
 
         slurm_invocation = self._slurm_invocation()
-        slurm_invocation.extend(singularity_command)
+        # srun needs to be added, or the salloc job will run locally.
+        slurm_invocation.extend(["srun"] + singularity_command)
         logger.info("Slurm invocation: " + ' '.join(
             shlex.quote(part) for part in slurm_invocation))
         return slurm_invocation
