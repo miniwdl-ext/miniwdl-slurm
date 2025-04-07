@@ -23,7 +23,7 @@ import os
 import shlex
 import sys
 from contextlib import ExitStack
-from typing import Dict, List
+from typing import Dict, Iterable, List
 
 from WDL import Type, Value
 from WDL.runtime import config
@@ -95,7 +95,17 @@ class SlurmSingularity(SingularityContainer):
                 Type.String()).value
             self.runtime_values["slurm_constraint"] = slurm_constraint
 
+    def _list_slurm_vars(self) -> Iterable[str]:
+        for key in os.environ.keys():
+            if key.startswith("SLURM_"):
+                yield key
+
     def _slurm_invocation(self):
+        # Unset all SLURM variables in the environment to ensure we get a fresh SLURM job
+        env_args = ["env"]
+        for var in self._list_slurm_vars():
+            env_args.extend(["-u", var])
+
         # We use srun as this makes the submitted job behave like a local job.
         # This also gives informative exit codes back, including 253 for out
         # of memory.
@@ -140,7 +150,7 @@ class SlurmSingularity(SingularityContainer):
             extra_args = self.cfg.get("slurm", "extra_args")
             if extra_args is not None:
                 srun_args.extend(shlex.split(extra_args))
-        return srun_args
+        return env_args + srun_args
 
     def _run_invocation(self, logger: logging.Logger, cleanup: ExitStack,
                         image: str) -> List[str]:
