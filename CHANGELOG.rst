@@ -6,6 +6,7 @@ version 0.3.0-dev
 ----------------------------
 + Always set `--ntasks 1`` to prevent multiple tasks being spawned.
 + Add support for a ``slurm_gpu_partition`` runtime attribute.
++ Unset all `SLURM_` environment variables when submitting jobs via `srun`. This allows jobs to be submitted from inside other Slurm jobs without inheriting the same allocation. This fixes <https://github.com/miniwdl-ext/miniwdl-slurm/issues/12>.
 
 
 version 0.2.0
