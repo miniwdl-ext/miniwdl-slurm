@@ -21,9 +21,10 @@
 import logging
 import os
 import shlex
+import subprocess
 import sys
 from contextlib import ExitStack
-from typing import Dict, List
+from typing import Callable, Dict, List
 
 from WDL import Type, Value
 from WDL.runtime import config
@@ -108,6 +109,7 @@ class SlurmSingularity(SingularityContainer):
         sbatch_args = [
             "sbatch",
             "--wait",
+            "--parsable",  # Make job ID parsing easier.
             "--job-name", self.run_id,
             # Specifically state that only one task may be spawned.
             # This prevents issues with the --cpus-per-task flag.
@@ -162,3 +164,23 @@ class SlurmSingularity(SingularityContainer):
         logger.info("Slurm invocation: " + ' '.join(
             shlex.quote(part) for part in slurm_invocation))
         return slurm_invocation
+
+    def _run(self,
+             logger: logging.Logger,
+             terminating: Callable[[], bool],
+             command: str
+             ) -> int:
+        # Line copied from base class as value is not publicly exposed.
+        cli_log_filename = os.path.join(self.host_dir, f"{self.cli_name}.log.txt")
+        try:
+            return super()._run(logger, terminating, command)
+        finally:
+            if terminating():  # Cancel the job if terminating
+                with open(cli_log_filename, "rt") as submit_log:
+                    # "job_id" or "job_id;cluster_name" are output with --parsable.
+                    job_id, *clusters = submit_log.read().strip().split(";", maxsplit=1)
+                if job_id.isdigit():  # A valid job ID.
+                    scancel_args = ["scancel"]
+                    if clusters:
+                        scancel_args.append(f"--clusters={clusters[0]}")
+                    subprocess.run(scancel_args + [job_id])
