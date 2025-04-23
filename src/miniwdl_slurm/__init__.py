@@ -76,17 +76,17 @@ class SlurmSingularity(SingularityContainer):
         if "time_minutes" in runtime_eval:
             time_minutes = runtime_eval["time_minutes"].coerce(Type.Int()).value
             self.runtime_values["time_minutes"] = time_minutes
-        
+
         if "slurm_account" in runtime_eval:
             slurm_account = runtime_eval["slurm_account"].coerce(
                 Type.String()).value
             self.runtime_values["slurm_account"] = slurm_account
-        
+
         if "slurm_account_gpu" in runtime_eval:
             slurm_account_gpu = runtime_eval["slurm_account_gpu"].coerce(
                 Type.String()).value
             self.runtime_values["slurm_account_gpu"] = slurm_account_gpu
-        
+
         if "slurm_partition" in runtime_eval:
             slurm_partition = runtime_eval["slurm_partition"].coerce(
                 Type.String()).value
