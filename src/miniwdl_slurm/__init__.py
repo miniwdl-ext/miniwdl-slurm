@@ -77,6 +77,16 @@ class SlurmSingularity(SingularityContainer):
             time_minutes = runtime_eval["time_minutes"].coerce(Type.Int()).value
             self.runtime_values["time_minutes"] = time_minutes
 
+        if "slurm_account" in runtime_eval:
+            slurm_account = runtime_eval["slurm_account"].coerce(
+                Type.String()).value
+            self.runtime_values["slurm_account"] = slurm_account
+
+        if "slurm_account_gpu" in runtime_eval:
+            slurm_account_gpu = runtime_eval["slurm_account_gpu"].coerce(
+                Type.String()).value
+            self.runtime_values["slurm_account_gpu"] = slurm_account_gpu
+
         if "slurm_partition" in runtime_eval:
             slurm_partition = runtime_eval["slurm_partition"].coerce(
                 Type.String()).value
@@ -120,7 +130,12 @@ class SlurmSingularity(SingularityContainer):
         if gpu:
             gpuCount = self.runtime_values.get("gpuCount", 1)
             sbatch_args.extend(["--gres", f"gpu:{gpuCount}"])
-
+        account = self.runtime_values.get("slurm_account", None)
+        account_gpu = self.runtime_values.get("slurm_account_gpu", None)
+        if gpu and account_gpu is not None:
+            sbatch_args.extend(["--account", account_gpu])
+        elif account is not None:
+            sbatch_args.extend(["--account", account])
         partition = self.runtime_values.get("slurm_partition", None)
         partition_gpu = self.runtime_values.get("slurm_partition_gpu", None)
         if gpu and partition_gpu is not None:
