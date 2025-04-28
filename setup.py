@@ -25,7 +25,7 @@ with open("README.rst") as fp:
 
 setup(
     name="miniwdl-slurm",
-    version="0.2.0",
+    version="0.3.0",
     license="MIT",
     url="https://github.com/miniwdl-ext/miniwdl-slurm",
     description="miniwdl slurm backend using singularity",
@@ -38,6 +38,7 @@ setup(
     python_requires=">=3.6",
     packages=find_packages('src'),
     package_dir={'': 'src'},
+    package_data={'miniwdl_slurm': ['scripts/*.sh']},
     install_requires=["miniwdl>=1.7.0"],
     entry_points={
         "miniwdl.plugin.container_backend": [
