@@ -2,11 +2,12 @@
 Changelog
 ==========
 
-version 0.3.0-dev
+version 0.3.0
 ----------------------------
++ Add support for ``slurm_account`` and ``slurm_account_gpu`` runtime options.
 + Use `sbatch --wait` instead of `srun` to prevent issues with batch submitted
   miniwdl runs.
-+ Always set `--ntasks 1`` to prevent multiple tasks being spawned.
++ Always set ``--ntasks 1`` to prevent multiple tasks being spawned.
 + Add support for a ``slurm_gpu_partition`` runtime attribute.
 
 
