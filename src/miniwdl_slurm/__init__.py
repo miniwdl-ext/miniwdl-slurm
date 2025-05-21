@@ -150,7 +150,16 @@ class SlurmSingularity(SingularityContainer):
         memory = self.runtime_values.get("memory_reservation", None)
         if memory is not None:
             # Round to the nearest megabyte.
-            sbatch_args.extend(["--mem", f"{round(memory / (1024 ** 2))}M"])
+            memory_mb = round(memory / (1024 ** 2))
+            try:
+                if self.cfg.has_section("slurm_custom") and cpu is not None:
+                    # assume GB
+                    mem_per_cpu = int(self.cfg.get("slurm_custom", "mem_per_cpu").strip()) # mem_per_cpu in GB
+                    mem_total_mb = mem_per_cpu * int(cpu) * 1024
+                    memory_mb = max(mem_total_mb, memory_mb)
+            except Exception:
+                pass
+            sbatch_args.extend(["--mem", f"{memory_mb}M"])
 
         time_minutes = self.runtime_values.get("time_minutes", None)
         if time_minutes is not None:
