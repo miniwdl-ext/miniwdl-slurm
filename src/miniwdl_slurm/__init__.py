@@ -150,6 +150,9 @@ class SlurmSingularity(SingularityContainer):
         if self.cfg.has_section("slurm_custom") and self.cfg.get("slurm_custom", "mem_per_cpu"):
             mem_per_cpu = self.cfg.get("slurm_custom", "mem_per_cpu").strip()
             sbatch_args.extend(["--mem-per-cpu", mem_per_cpu])
+        if self.cfg.has_section("slurm_custom") and self.cfg.get("slurm_custom", "mem_per_gpu"):
+            mem_per_gpu = self.cfg.get("slurm_custom", "mem_per_gpu").strip()
+            sbatch_args.extend(["--mem-per-gpu", mem_per_gpu])
         else:           
             memory = self.runtime_values.get("memory_reservation", None)
             if memory is not None:
