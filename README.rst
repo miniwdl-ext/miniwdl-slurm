@@ -10,13 +10,9 @@ description has a container, singularity will be used as container runtime.
 
 Installation
 ------------
-For the latest stable version::
-
-    pip install miniwdl-slurm
-
 For the development version::
 
-    pip install git+https://github.com/miniwdl-ext/miniwdl-slurm.git
+    pip install git+https://github.com/Pkoiralap/miniwdl-slurm-mem-per-cpu
 
 Configuration
 --------------
@@ -76,5 +72,6 @@ example can be used to use miniwdl on a SLURM cluster:
     extra_args="--partition heavy_users,gpu --comment 'run with miniwdl'"
 
     [slurm_custom]
+    # do either or, don't do both
     mem_per_cpu="8G"
-    mem_per_gpu="8G"
+    #mem_per_gpu="8G"
