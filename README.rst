@@ -70,8 +70,4 @@ example can be used to use miniwdl on a SLURM cluster:
     [slurm]
     # extra arguments passed to the sbatch command (optional).
     extra_args="--partition heavy_users,gpu --comment 'run with miniwdl'"
-
-    [slurm_custom]
-    # do either or, don't do both
     mem_per_cpu="8G"
-    #mem_per_gpu="8G"
