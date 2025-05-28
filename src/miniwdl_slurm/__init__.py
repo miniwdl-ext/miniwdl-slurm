@@ -147,13 +147,10 @@ class SlurmSingularity(SingularityContainer):
         if cpu is not None:
             sbatch_args.extend(["--mincpu", str(cpu)])
 
-        if self.cfg.has_section("slurm_custom") and self.cfg.get("slurm_custom", "mem_per_cpu"):
-            mem_per_cpu = self.cfg.get("slurm_custom", "mem_per_cpu").strip()
+        if self.cfg.has_section("slurm") and self.cfg.get("slurm", "mem_per_cpu"):
+            mem_per_cpu = self.cfg.get("slurm", "mem_per_cpu").strip()
             sbatch_args.extend(["--mem-per-cpu", mem_per_cpu])
-        if self.cfg.has_section("slurm_custom") and self.cfg.get("slurm_custom", "mem_per_gpu"):
-            mem_per_gpu = self.cfg.get("slurm_custom", "mem_per_gpu").strip()
-            sbatch_args.extend(["--mem-per-gpu", mem_per_gpu])
-        else:           
+        else:
             memory = self.runtime_values.get("memory_reservation", None)
             if memory is not None:
                 # Round to the nearest megabyte.
