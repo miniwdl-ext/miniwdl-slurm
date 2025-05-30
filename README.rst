@@ -61,9 +61,20 @@ example can be used to use miniwdl on a SLURM cluster:
     exe = ["singularity"]
 
     # the miniwdl default options contain options to run as a fake root, which
-    # is not available on most clusters.
+    # is not available on most clusters. So the run options do need to be
+    # overriden.
+    # --containall: isolates container environment, does not mount home, and
+    # isolates IPC and PID namespace.
+    # --no-mount hostfs: Prohibit mounting of any host filesystems unless
+    # explcitly mounted.
+    # --network none: Do not allow any network traffic inside and outside
+    # the container. This is a sane default for reproducible workflows,
+    # as "the internet" can vary, but if you have explicit download tasks
+    # you might need to remove this.
     run_options = [
-            "--containall"
+            "--containall",
+            "--no-mount", "hostfs",
+            "--network", "none"
         ]
 
     # Location of the singularity images (optional). The miniwdl-slurm plugin
