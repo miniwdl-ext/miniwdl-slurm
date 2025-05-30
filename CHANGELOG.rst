@@ -5,6 +5,8 @@ Changelog
 
 version 0.4.0-dev
 ----------------------------
++ Document the use of ``--network none`` and ``--no-mount hostfs`` options
+  as sane defaults in the example configuration.
 + Use ``--cpus-per-task`` rather than ``--mincpus``.
 + Add support for a ``gpuType`` runtime attribute to specify the type of GPU required.
 
