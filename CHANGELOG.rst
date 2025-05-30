@@ -3,7 +3,7 @@ Changelog
 ==========
 
 
-version 0.4.0-dev
+version 0.4.0
 ----------------------------
 + Bump the required Python version to 3.9 as older versions cannot be tested.
 + Document the use of ``--network none`` and ``--no-mount hostfs`` options
