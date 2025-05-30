@@ -101,6 +101,10 @@ class SlurmSingularity(SingularityContainer):
             gpuCount = max(1, runtime_eval["gpuCount"].coerce(Type.Int()).value)
             self.runtime_values["gpuCount"] = gpuCount
 
+        if "gpuType" in runtime_eval:
+            gpuType = runtime_eval["gpuType"].coerce(Type.String()).value
+            self.runtime_values["gpuType"] = gpuType
+
         if "slurm_constraint" in runtime_eval:
             slurm_constraint = runtime_eval["slurm_constraint"].coerce(
                 Type.String()).value
@@ -126,26 +130,31 @@ class SlurmSingularity(SingularityContainer):
             "--ntasks", "1",
         ]
 
-        gpu = self.runtime_values.get("gpu", None)
-        if gpu:
-            gpuCount = self.runtime_values.get("gpuCount", 1)
+        gpuCount = self.runtime_values.get("gpuCount", None)
+        gpuType = self.runtime_values.get("gpuType", None)
+        if gpuCount is not None and gpuType is not None:
+            sbatch_args.extend(["--gres", f"gpu:{gpuType}:{gpuCount}"])
+        elif gpuCount is not None:
+            # If no gpuType is given, use the default GPU type.
             sbatch_args.extend(["--gres", f"gpu:{gpuCount}"])
+
         account = self.runtime_values.get("slurm_account", None)
         account_gpu = self.runtime_values.get("slurm_account_gpu", None)
-        if gpu and account_gpu is not None:
+        if gpuCount is not None and account_gpu is not None:
             sbatch_args.extend(["--account", account_gpu])
         elif account is not None:
             sbatch_args.extend(["--account", account])
+
         partition = self.runtime_values.get("slurm_partition", None)
         partition_gpu = self.runtime_values.get("slurm_partition_gpu", None)
-        if gpu and partition_gpu is not None:
+        if gpuCount is not None and partition_gpu is not None:
             sbatch_args.extend(["--partition", partition_gpu])
         elif partition is not None:
             sbatch_args.extend(["--partition", partition])
 
         cpu = self.runtime_values.get("cpu", None)
         if cpu is not None:
-            sbatch_args.extend(["--mincpu", str(cpu)])
+            sbatch_args.extend(["--cpus-per-task", str(cpu)])
 
         if self.cfg.has_section("slurm") and self.cfg.get("slurm", "mem_per_cpu"):
             mem_per_cpu = self.cfg.get("slurm", "mem_per_cpu").strip()

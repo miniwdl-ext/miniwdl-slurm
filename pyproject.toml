@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=77", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name= "miniwdl-slurm"
+description = "miniwdl slurm backend using singularity"
+authors = [
+    {name = "Leiden University Medical Center",  email = "sasc@lumc.nl"}
+]
+keywords = [
+    "WDL",
+    "miniwdl",
+    "slurm",
+    "backend",
+    "singularity",
+]
+dynamic = ["version"]
+readme = "README.rst"
+license = "MIT"
+requires-python = ">=3.9"  # Older versions cannot be tested anymore.
+dependencies = [
+    "miniwdl>=1.7.0"
+]
+classifiers=[
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: System :: Distributed Computing",
+]
+
+[project.entry-points."miniwdl.plugin.container_backend"]
+slurm_singularity = "miniwdl_slurm:SlurmSingularity"
+
+[project.urls]
+"Homepage" = "https://github.com/miniwdl-ext/miniwdl-slurm"
+
+[project.scripts]
+
+[tool.setuptools_scm]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+miniwdl_slurm = [
+    "scripts/*.sh"
+]
+
