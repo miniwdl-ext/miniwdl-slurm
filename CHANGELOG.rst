@@ -2,15 +2,19 @@
 Changelog
 ==========
 
-version 0.3.0-dev
+
+version 0.4.0-dev
 ----------------------------
-+ Use ``sbatch --wait`` instead of ``srun`` to prevent issues with batch submitted
++ Use ``--cpus-per-task`` rather than ``--mincpus``.
++ Add support for a ``gpuType`` runtime attribute to specify the type of GPU required.
+
+version 0.3.0
+----------------------------
++ Add support for ``slurm_account`` and ``slurm_account_gpu`` runtime options.
++ Use `sbatch --wait` instead of `srun` to prevent issues with batch submitted
   miniwdl runs.
 + Always set ``--ntasks 1`` to prevent multiple tasks being spawned.
-+ Add support for a ``gpuType`` runtime attribute to specify the type of GPU required.
-+ Add support for a ``slurm_partition_gpu`` runtime attribute.
-+ Add support for ``slurm_account`` and ``slurm_account_gpu`` runtime attributes.
-
++ Add support for a ``slurm_gpu_partition`` runtime attribute.
 
 version 0.2.0
 ----------------------------
