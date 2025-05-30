@@ -12,7 +12,7 @@ Installation
 ------------
 For the development version::
 
-    pip install git+https://github.com/Pkoiralap/miniwdl-slurm-mem-per-cpu
+    pip install git+https://github.com/miniwdl-ext/miniwdl-slurm.git
 
 Configuration
 --------------
