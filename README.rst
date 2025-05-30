@@ -10,6 +10,10 @@ description has a container, singularity will be used as container runtime.
 
 Installation
 ------------
+For the latest stable version::
+
+    pip install miniwdl-slurm
+
 For the development version::
 
     pip install git+https://github.com/miniwdl-ext/miniwdl-slurm.git
