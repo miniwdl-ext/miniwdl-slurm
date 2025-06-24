@@ -174,8 +174,8 @@ class SlurmSingularity(SingularityContainer):
             if extra_args is not None:
                 sbatch_args.extend(shlex.split(extra_args))
 
-            dynamic_partition = self.cfg.get("slurm", "dynamic_partition", None)
-            if dynamic_partition is not None:
+            dynamic_partition = self.cfg.get("slurm", "dynamic_partition", False)
+            if dynamic_partition:
                 import subprocess
                 env = {f"runtime_value_{str(k)}".upper(): str(v) for k, v in self.runtime_values.items()}
                 srun_args.extend(subprocess.check_output(dynamic_partition, env=env).decode('utf-8').split())
