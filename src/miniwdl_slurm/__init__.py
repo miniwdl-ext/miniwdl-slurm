@@ -170,8 +170,8 @@ class SlurmSingularity(SingularityContainer):
             sbatch_args.extend(["--constraint", slurm_constraint])
 
         if self.cfg.has_section("slurm"):
-            extra_args = self.cfg.get("slurm", "extra_args")
-            if extra_args is not None:
+            extra_args = self.cfg.get("slurm", "extra_args", "")
+            if extra_args:
                 sbatch_args.extend(shlex.split(extra_args))
 
             partition_rules = self.cfg.get_list("slurm", "dynamic_partition", [])
