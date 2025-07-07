@@ -3,6 +3,11 @@ Changelog
 ==========
 
 
+version 0.5.0
+----------------------------
++ Add support for a ``dynamic_partition`` attribute to supply ``sbatch``
+  arguments based on job submission parameters.
+
 version 0.4.0
 ----------------------------
 + Bump the required Python version to 3.9 as older versions cannot be tested.

@@ -24,7 +24,7 @@ import shlex
 import subprocess
 import sys
 from contextlib import ExitStack
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Union
 
 from WDL import Type, Value
 from WDL.runtime import config
@@ -173,6 +173,13 @@ class SlurmSingularity(SingularityContainer):
             extra_args = self.cfg.get("slurm", "extra_args")
             if extra_args is not None:
                 sbatch_args.extend(shlex.split(extra_args))
+
+            partition_rules = self.cfg.get_list("slurm", "dynamic_partition", [])
+            for rule in partition_rules:
+                if self._rules_match(rule):
+                    sbatch_args.extend(shlex.split(rule['args']))
+                    break
+
         # This is a script that simply executes all the following arguments.
         exec_script = os.path.join(os.path.dirname(__file__), "scripts",
                                    "exec_script.sh")
@@ -208,3 +215,39 @@ class SlurmSingularity(SingularityContainer):
                     if clusters:
                         scancel_args.append(f"--clusters={clusters[0]}")
                     subprocess.run(scancel_args + [job_id])
+
+    attribute_lookup = {
+        'memory': 'memory_reservation',
+    }
+
+    def _rules_match(self, rule: dict[str, Union[int, float]]):
+        for rule_pair, expected_value in rule.items():
+            if '__' not in rule_pair:
+                continue
+
+            (attribute, comparator) = rule_pair.split('__', 1)
+            attr_name = self.attribute_lookup.get(attribute, attribute)
+            runtime_value = self.runtime_values.get(attr_name)
+            if runtime_value is not None:
+                if not self._rule_pair_matches(expected_value, comparator,
+                                               runtime_value):
+                    return False
+        return True
+
+    def _rule_pair_matches(self, value: Union[int, float], comparator: str,
+                           runtime_value: Union[int, float]) -> bool:
+        if comparator == 'le':
+            return runtime_value <= value
+        elif comparator == 'lt':
+            return runtime_value < value
+        elif comparator == 'ge':
+            return runtime_value >= value
+        elif comparator == 'gt':
+            return runtime_value > value
+        elif comparator == 'ne':
+            return runtime_value != value
+        elif comparator == 'eq':
+            return runtime_value == value
+
+        raise Exception("Unsupported comparator: {comparator}"
+                        "not in (le, lt, ge, gt, ne, eq)")

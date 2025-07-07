@@ -85,3 +85,35 @@ example can be used to use miniwdl on a SLURM cluster:
     [slurm]
     # extra arguments passed to the sbatch command (optional).
     extra_args="--partition heavy_users,gpu --comment 'run with miniwdl'"
+
+
+
+In some cases, you may wish to dynamically modify the SLURM submission arguments.
+This is possible through rule based arguments. Rules consist of one or more
+attributes, along with a comparator (lt/<, le/<=, gt/>, ge/>=, eq/==, ne/!=).
+
+These results are evaluated sequentially until one matches, at which point the
+value in ``args`` is appended to the ``sbatch`` command line. This can be used to
+modify the partition, the comment, or something else.
+
+
+.. code-block:: ini
+
+    [slurm]
+    # extra arguments passed to the sbatch command (optional).
+    dynamic_partition = [
+        {
+          "memory__ge": 20000000000,
+          "cpu__gt": 30,
+          "time_minutes__gt": 7200,
+          "args": "--partition highmem --comment highmem-long"
+        },
+        {
+          "memory__lt": 2000000000,
+          "time_minutes__lt": 60,
+          "args": "--comment short"
+        },
+        {
+          "args": "--comment default"
+        }
+      ]
