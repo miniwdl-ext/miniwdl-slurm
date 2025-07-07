@@ -7,6 +7,7 @@ version 0.5.0
 ----------------------------
 + Add support for a ``dynamic_partition`` attribute to supply ``sbatch``
   arguments based on job submission parameters.
++ Safely handle case where ``extra_args`` is not set.
 
 version 0.4.0
 ----------------------------
