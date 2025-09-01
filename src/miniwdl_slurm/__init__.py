@@ -101,7 +101,7 @@ class SlurmSingularity(SingularityContainer):
             gpuCount = max(1, runtime_eval["gpuCount"].coerce(Type.Int()).value)
             self.runtime_values["gpuCount"] = gpuCount
 
-        if "gpuType" in runtime_eval:
+        if "gpuType" in runtime_eval and runtime_eval["gpuType"]:
             gpuType = runtime_eval["gpuType"].coerce(Type.String()).value
             self.runtime_values["gpuType"] = gpuType
 
@@ -132,7 +132,7 @@ class SlurmSingularity(SingularityContainer):
 
         gpuCount = self.runtime_values.get("gpuCount", None)
         gpuType = self.runtime_values.get("gpuType", None)
-        if gpuCount is not None and gpuType is not None:
+        if gpuCount is not None and gpuType:
             sbatch_args.extend(["--gres", f"gpu:{gpuType}:{gpuCount}"])
         elif gpuCount is not None:
             # If no gpuType is given, use the default GPU type.
