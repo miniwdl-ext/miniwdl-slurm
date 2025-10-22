@@ -97,6 +97,16 @@ class SlurmSingularity(SingularityContainer):
                 Type.String()).value
             self.runtime_values["slurm_partition_gpu"] = slurm_partition_gpu
 
+        if "slurm_qos" in runtime_eval:
+            slurm_qos = runtime_eval["slurm_qos"].coerce(
+                Type.String()).value
+            self.runtime_values["slurm_qos"] = slurm_qos
+
+        if "slurm_qos_gpu" in runtime_eval:
+            slurm_qos_gpu = runtime_eval["slurm_qos_gpu"].coerce(
+                Type.String()).value
+            self.runtime_values["slurm_qos_gpu"] = slurm_qos_gpu
+
         if "gpuCount" in runtime_eval:
             gpuCount = max(1, runtime_eval["gpuCount"].coerce(Type.Int()).value)
             self.runtime_values["gpuCount"] = gpuCount
@@ -151,6 +161,13 @@ class SlurmSingularity(SingularityContainer):
             sbatch_args.extend(["--partition", partition_gpu])
         elif partition is not None:
             sbatch_args.extend(["--partition", partition])
+
+        qos = self.runtime_values.get("slurm_qos", None)
+        qos_gpu = self.runtime_values.get("slurm_qos_gpu", None)
+        if gpuCount is not None and qos_gpu is not None:
+            sbatch_args.extend(["--qos", qos_gpu])
+        elif qos is not None:
+            sbatch_args.extend(["--qos", qos])
 
         cpu = self.runtime_values.get("cpu", None)
         if cpu is not None:
