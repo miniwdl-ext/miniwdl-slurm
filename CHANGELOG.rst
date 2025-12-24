@@ -2,6 +2,9 @@
 Changelog
 ==========
 
+version 0.6.0
+----------------------------
++ Add support for ``slurm_qos`` and ``slurm_qos_gpu`` runtime options.
 
 version 0.5.0
 ----------------------------
