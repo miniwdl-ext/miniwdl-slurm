@@ -148,32 +148,27 @@ class SlurmSingularity(SingularityContainer):
             # If no gpuType is given, use the default GPU type.
             sbatch_args.extend(["--gres", f"gpu:{gpuCount}"])
 
-        account = self.runtime_values.get("slurm_account", None)
-        account_gpu = self.runtime_values.get("slurm_account_gpu", None)
-        if gpuCount is not None and account_gpu is not None:
-            sbatch_args.extend(["--account", account_gpu])
-        elif account is not None:
-            sbatch_args.extend(["--account", account])
+        if gpuCount is not None:
+            partition = self.runtime_values.get("slurm_partition_gpu", None)
+            qos = self.runtime_values.get("slurm_qos_gpu", None)
+            account = self.runtime_values.get("slurm_account_gpu", None)
+        else:
+            partition = self.runtime_values.get("slurm_partition", None)
+            qos = self.runtime_values.get("slurm_qos", None)
+            account = self.runtime_values.get("slurm_account", None)
 
-        partition = self.runtime_values.get("slurm_partition", None)
-        partition_gpu = self.runtime_values.get("slurm_partition_gpu", None)
-        if gpuCount is not None and partition_gpu is not None:
-            sbatch_args.extend(["--partition", partition_gpu])
-        elif partition is not None:
+        if partition is not None:
             sbatch_args.extend(["--partition", partition])
-
-        qos = self.runtime_values.get("slurm_qos", None)
-        qos_gpu = self.runtime_values.get("slurm_qos_gpu", None)
-        if gpuCount is not None and qos_gpu is not None:
-            sbatch_args.extend(["--qos", qos_gpu])
-        elif qos is not None:
+        if account is not None:
+            sbatch_args.extend(["--account", account])
+        if qos is not None:
             sbatch_args.extend(["--qos", qos])
 
         cpu = self.runtime_values.get("cpu", None)
         if cpu is not None:
             sbatch_args.extend(["--cpus-per-task", str(cpu)])
 
-        memory = self.runtime_values.get("memory_reservation", None)
+        memory = self._retry_adjusted_memory_reservation()
         if memory is not None:
             # Round to the nearest megabyte.
             sbatch_args.extend(["--mem", f"{round(memory / (1024 ** 2))}M"])
@@ -237,6 +232,21 @@ class SlurmSingularity(SingularityContainer):
         'memory': 'memory_reservation',
     }
 
+    def _retry_adjusted_memory_reservation(self) -> Union[int, float, None]:
+        memory = self.runtime_values.get("memory_reservation", None)
+        if memory is not None and self.try_counter > 1:
+            memory *= 1.5 ** (self.try_counter - 1)
+        return memory
+
+    def _rule_runtime_value(self, attr_name: str) -> Union[int, float, None]:
+        if attr_name == "memory_reservation":
+            return self._retry_adjusted_memory_reservation()
+
+        runtime_value = self.runtime_values.get(attr_name)
+        if isinstance(runtime_value, (int, float)):
+            return runtime_value
+        return None
+
     def _rules_match(self, rule: dict[str, Union[int, float]]):
         for rule_pair, expected_value in rule.items():
             if '__' not in rule_pair:
@@ -244,11 +254,11 @@ class SlurmSingularity(SingularityContainer):
 
             (attribute, comparator) = rule_pair.split('__', 1)
             attr_name = self.attribute_lookup.get(attribute, attribute)
-            runtime_value = self.runtime_values.get(attr_name)
-            if runtime_value is not None:
-                if not self._rule_pair_matches(expected_value, comparator,
-                                               runtime_value):
-                    return False
+            runtime_value = self._rule_runtime_value(attr_name)
+            if runtime_value is None:
+                return False
+            if not self._rule_pair_matches(expected_value, comparator, runtime_value):
+                return False
         return True
 
     def _rule_pair_matches(self, value: Union[int, float], comparator: str,
