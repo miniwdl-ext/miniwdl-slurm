@@ -117,3 +117,20 @@ modify the partition, the comment, or something else.
           "args": "--comment default"
         }
       ]
+
+Rules with conditions only match when all referenced runtime attributes are
+present. This allows rules to switch arguments based on optional runtime values
+such as ``gpuCount``:
+
+.. code-block:: ini
+
+    [slurm]
+    dynamic_partition = [
+        {
+          "gpuCount__ge": 1,
+          "args": "--partition gpu --account gpu_account --qos gpu_qos"
+        },
+        {
+          "args": "--partition cpu --account cpu_account --qos cpu_qos"
+        }
+      ]

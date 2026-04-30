@@ -2,6 +2,14 @@
 Changelog
 ==========
 
+Unreleased
+----------------------------
++ Refactor SLURM account, partition, qos handling logic for cleaner code
++ Increase requested Slurm memory by 1.5x after out-of-memory task failures
+  and log when retry memory is increased.
++ Make ``dynamic_partition`` rules with missing runtime attributes fail to
+  match, allowing optional attributes such as ``gpuCount`` to select rules.
+
 version 0.6.0
 ----------------------------
 + Add support for ``slurm_qos`` and ``slurm_qos_gpu`` runtime options.
